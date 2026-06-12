@@ -55,11 +55,31 @@ code .num{color:#f78c6c}
 @keyframes pl{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
 .grabando{background:#d63031 !important;animation:lat 1s infinite}
 @keyframes lat{0%,100%{opacity:1}50%{opacity:.5}}
+.lock-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:2rem}
+.lock-overlay .logo{width:64px;height:64px;font-size:2rem;margin-bottom:1rem}
+.lock-overlay h2{color:#e0e0ff;margin-bottom:.5rem;text-align:center}
+.lock-overlay p{color:#8888aa;margin-bottom:2rem;text-align:center}
+.lock-overlay input{width:100%;max-width:300px;padding:.75rem;background:#1a1a3a;border:1px solid #2a2a4a;border-radius:8px;color:#e0e0ff;font-size:1rem;text-align:center;margin-bottom:1rem}
+.lock-overlay input:focus{outline:none;border-color:#6c5ce7}
+.lock-error{color:#ff6b6b;font-size:.85rem;margin-bottom:.5rem;display:none}
+.lock-hint{color:#546e7a;font-size:.75rem;margin-top:.5rem}
+.app-content{display:none}
 footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1px solid #2a2a4a}
 </style>
 </head>
 <body>
 
+<div class="lock-overlay" id="lockScreen">
+<div class="logo">V</div>
+<h2>Viviente</h2>
+<p id="lockMsg">Ingresa tu contraseña</p>
+<input type="password" id="lockInp" placeholder="Contraseña" autocomplete="off">
+<div class="lock-error" id="lockErr">Contraseña incorrecta</div>
+<button class="btn" id="lockBtn" onclick="checkPass()">Entrar</button>
+<div class="lock-hint" id="lockHint"></div>
+</div>
+
+<div class="app-content" id="appContent">
 <header>
 <div class="logo">V</div>
 <div style="font-weight:bold">Viviente</div>
@@ -179,6 +199,56 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <footer>Viviente - IA Auto-Mejorable</footer>
 
 <script>
+const PASS_KEY = 'viviente_pass_hash';
+
+let passHash = localStorage.getItem(PASS_KEY);
+
+function hashPass(p){
+  let h=0;for(let i=0;i<p.length;i++){let c=p.charCodeAt(i);h=((h<<5)-h)+c;h|=0}
+  return 'h'+Math.abs(h).toString(36);
+}
+
+function checkPass(){
+  const inp=document.getElementById('lockInp');
+  const err=document.getElementById('lockErr');
+  const val=inp.value.trim();
+  if(!val)return;
+  if(!passHash){
+    passHash=hashPass(val);
+    localStorage.setItem(PASS_KEY,passHash);
+    unlockApp();
+  }else{
+    if(hashPass(val)===passHash){unlockApp()}
+    else{err.style.display='block';inp.value='';inp.focus()}
+  }
+}
+
+function unlockApp(){
+  document.getElementById('lockScreen').style.display='none';
+  document.getElementById('appContent').style.display='block';
+}
+
+function lockInit(){
+  const s=document.getElementById('lockScreen');
+  const m=document.getElementById('lockMsg');
+  const h=document.getElementById('lockHint');
+  const b=document.getElementById('lockBtn');
+  if(passHash){
+    m.textContent='Ingresa tu contraseña para acceder';
+    b.textContent='Entrar';
+    h.textContent='';
+  }else{
+    m.textContent='Configura tu contraseña maestra';
+    b.textContent='Establecer';
+    h.textContent='Elige una contraseña que recuerdes. Sin ella no podrás acceder.';
+  }
+  document.getElementById('lockInp').addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();checkPass()}
+  });
+  document.getElementById('lockInp').focus();
+}
+window.addEventListener('DOMContentLoaded',lockInit);
+
 const MODEL = "llama-3.3-70b-versatile";
 const STORAGE_KEY = 'viviente_historial';
 
@@ -396,5 +466,6 @@ document.getElementById('chatInp').addEventListener('keydown',function(e){
 if(e.key==='Enter'){e.preventDefault();chat()}
 });
 </script>
+</div>
 </body>
 </html>
