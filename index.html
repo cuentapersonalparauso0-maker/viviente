@@ -123,7 +123,69 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <div class="pagina" id="pag-aprender">
 <h2>Aprender a Programar</h2>
 <textarea id="aprQ" rows="3" placeholder="¿Qué quieres aprender a crear? Ej: una calculadora, un juego, una página web..."></textarea>
-<select id="aprLang"><option value="python">Python</option><option value="javascript">JavaScript</option><option value="html">HTML/CSS</option></select>
+<select id="aprLang" size="5" style="height:auto">
+<optgroup label="Populares">
+<option value="Python 3">Python 3</option>
+<option value="Java">Java</option>
+<option value="JavaScript (Node)">JavaScript (Node)</option>
+<option value="TypeScript">TypeScript</option>
+<option value="C# (dotnet)">C# (.NET)</option>
+<option value="C# (mono)">C# (Mono)</option>
+<option value="PHP">PHP</option>
+<option value="Ruby">Ruby</option>
+<option value="Go">Go</option>
+<option value="Rust">Rust</option>
+<option value="Swift">Swift</option>
+<option value="Kotlin">Kotlin</option>
+<option value="Dart">Dart</option>
+</optgroup>
+<optgroup label="C y derivados">
+<option value="C">C</option>
+<option value="C++">C++</option>
+<option value="C++14">C++14</option>
+<option value="C++17">C++17</option>
+<option value="C++20">C++20</option>
+<option value="C++23">C++23</option>
+<option value="C (TurboC)">C (TurboC)</option>
+<option value="C++ (TurboC)">C++ (TurboC)</option>
+<option value="Objective C">Objective C</option>
+</optgroup>
+<optgroup label="Web">
+<option value="HTML,JS,CSS">HTML+JS+CSS</option>
+<option value="JavaScript (Rhino)">JavaScript (Rhino)</option>
+<option value="TypeScript">TypeScript</option>
+<option value="SQLite">SQLite</option>
+</optgroup>
+<optgroup label="Funcional y Lógico">
+<option value="Haskell">Haskell</option>
+<option value="OCaml">OCaml</option>
+<option value="Prolog">Prolog</option>
+<option value="Lisp/Scheme">Lisp / Scheme</option>
+</optgroup>
+<optgroup label="Clásicos">
+<option value="Pascal">Pascal</option>
+<option value="PascalABC.NET">PascalABC.NET</option>
+<option value="Cobol">Cobol</option>
+<option value="Fortran">Fortran</option>
+<option value="Ada">Ada</option>
+<option value="VB">Visual Basic</option>
+<option value="Perl">Perl</option>
+<option value="Assembly (GCC)">Assembly (GCC)</option>
+<option value="Assembly (NASM)">Assembly (NASM)</option>
+</optgroup>
+<optgroup label="Modernos y niche">
+<option value="Zig">Zig</option>
+<option value="Lua">Lua</option>
+<option value="D">D</option>
+<option value="Groovy">Groovy</option>
+<option value="Tcl">Tcl</option>
+<option value="C3">C3</option>
+<option value="Smalltalk">Smalltalk</option>
+<option value="R">R</option>
+<option value="Bash">Bash</option>
+<option value="Dart">Dart</option>
+</optgroup>
+</select>
 <button class="btn" onclick="aprender()">Aprender desde Cero</button>
 <div class="resultado" id="aprRes"><h3>Explicación Paso a Paso</h3><pre id="aprOut"></pre></div>
 </div>
@@ -335,13 +397,13 @@ document.getElementById('crearOut').innerHTML=colorear(r);
 async function aprender(){
 const q=document.getElementById('aprQ').value.trim();
 const l=document.getElementById('aprLang').value;
-if(!q)return alert('Escribe que quieres aprender a crear');
+if(!q)return alert('Escribe qué quieres aprender a crear');
 document.getElementById('aprRes').style.display='block';
-document.getElementById('aprOut').textContent='Generando explicacion...';
+document.getElementById('aprOut').innerHTML='Generando explicación personalizada...';
 try{
-const r=await llamarGroq([{role:"system",content:"Eres un profesor de programacion que explica desde cero. Tu tarea es:\n1. Explicar el codigo paso a paso en español, como si el alumno no supiera nada\n2. Incluir el codigo completo con comentarios en español (# o //) explicando linea por linea que hace cada parte\n3. Si el codigo usa palabras en ingles (print, function, etc.), explicar al lado o en comentario que significa\n4. Separar la explicacion en secciones: QUE VAMOS A CREAR, CODIGO (con comentarios en español), EXPLICACION DETALLADA\n5. Ser amigable y motivador"},{role:"user",content:"Quiero aprender a crear: "+q+"\nLenguaje: "+l}]);
+const r=await llamarGroq([{role:"system",content:"Eres un instructor de programacion personal experto en el lenguaje "+l+". Tu metodo de enseñanza:\n\n1. TEORIA: Explica brevemente que es el lenguaje "+l+", para que se usa, sus caracteristicas principales, y conceptos clave\n2. PRACTICA: Escribe el codigo completo en "+l+" para lo que el alumno pide\n3. El codigo debe tener comentarios EXPLICATIVOS EN ESPAÑOL linea por linea (# o // segun el lenguaje) detallando que hace cada parte\n4. Si el codigo tiene palabras clave del lenguaje en ingles, explicar al lado que significan\n5. Separar en secciones claras: TEORIA, CODIGO CON COMENTARIOS, EXPLICACION DETALLADA\n6. Ser motivador, paciente, como si fuera la primera vez que el alumno programa\n7. Incluir ejemplos concretos"},{role:"user",content:"Quiero aprender el lenguaje "+l+" desde cero. Dame teoría y después crea: "+q}]);
 document.getElementById('aprOut').innerHTML=r.replace(/\n/g,'<br>');
-}catch(e){document.getElementById('aprOut').textContent='Error: '+e.message}
+}catch(e){document.getElementById('aprOut').innerHTML='Error: '+e.message}
 }
 
 document.getElementById('chatInp').addEventListener('keydown',function(e){
