@@ -68,6 +68,7 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <div class="tab" onclick="mostrar('codigo',this)">C\u00f3digo</div>
 <div class="tab" onclick="mostrar('predecir',this)">Predecir</div>
 <div class="tab" onclick="mostrar('mejorar',this)">Mejorar</div>
+<div class="tab" onclick="mostrar('crear',this)">Crear App</div>
 <div class="tab" onclick="mostrar('aprender',this)">Aprender</div>
 </div>
 </header>
@@ -109,6 +110,14 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <button class="btn sec" onclick="reflexionar()" style="margin-left:.5rem">Reflexionar</button>
 <div class="resultado" id="impRes"><h3>C\u00f3digo Mejorado</h3><pre id="impOut"></pre></div>
 <div class="resultado" id="refRes" style="margin-top:1rem"><h3>Reflexi\u00f3n de Viviente</h3><pre id="refOut"></pre></div>
+</div>
+
+<div class="pagina" id="pag-crear">
+<h2>Crear Aplicaci\u00f3n Completa</h2>
+<textarea id="crearQ" rows="4" placeholder="Describe la aplicaci\u00f3n que quieres crear. Ej: Una aplicaci\u00f3n de notas con HTML+CSS+JS, una calculadora cient\u00edfica en Python, una p\u00e1gina web tipo blog..."></textarea>
+<select id="crearLang"><option value="html">HTML+CSS+JS</option><option value="python">Python</option><option value="javascript">JavaScript</option></select>
+<button class="btn" onclick="crearApp()">Crear Aplicaci\u00f3n</button>
+<div class="resultado" id="crearRes"><h3>C\u00f3digo Completo</h3><pre id="crearOut"></pre></div>
 </div>
 
 <div class="pagina" id="pag-aprender">
@@ -309,6 +318,18 @@ function escuchar(){
     btn.textContent='\uD83C\uDF99';
   };
   reconocimiento.start();
+}
+
+async function crearApp(){
+const q=document.getElementById('crearQ').value.trim();
+const l=document.getElementById('crearLang').value;
+if(!q)return alert('Describe la aplicacion que quieres crear');
+document.getElementById('crearRes').style.display='block';
+document.getElementById('crearOut').textContent='Generando aplicacion completa...';
+try{
+const r=await llamarGroq([{role:"system",content:"Eres un desarrollador experto. Genera el codigo COMPLETO y FUNCIONAL de la aplicacion solicitada. Incluye todo lo necesario para que funcione: HTML, CSS, JavaScript si es web, o el codigo completo si es otro lenguaje. No expliques, solo da el codigo completo listo para usar."},{role:"user",content:"Crea esta aplicacion: "+q+"\nLenguaje: "+l}]);
+document.getElementById('crearOut').innerHTML=colorear(r);
+}catch(e){document.getElementById('crearOut').textContent='Error: '+e.message}
 }
 
 async function aprender(){
