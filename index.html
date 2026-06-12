@@ -65,7 +65,7 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <div style="font-weight:bold">Viviente</div>
 <div class="tabs">
 <div class="tab activa" onclick="mostrar('chat',this)">Chat</div>
-<div class="tab" onclick="mostrar('codigo',this)">C\u00f3digo</div>
+<div class="tab" onclick="mostrar('codigo',this)">Código</div>
 <div class="tab" onclick="mostrar('predecir',this)">Predecir</div>
 <div class="tab" onclick="mostrar('mejorar',this)">Mejorar</div>
 <div class="tab" onclick="mostrar('crear',this)">Crear App</div>
@@ -76,7 +76,7 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <div class="pagina activa" id="pag-chat">
 <div class="chat-box">
 <div class="msg-area" id="msgs">
-<div class="msg viv"><div class="msg-c">Hola, soy Viviente. Estoy aqu\u00ed para ayudarte a crear, innovar y explorar. \u00bfEn qu\u00e9 puedo ayudarte?</div></div>
+<div class="msg viv"><div class="msg-c">Hola, soy Viviente. Estoy aquí para ayudarte a crear, innovar y explorar. ¿En qué puedo ayudarte?</div></div>
 </div>
 <div class="input-area">
 <button class="btn icn sec" id="micBtn" onclick="escuchar()" title="Entrada por voz">\uD83C\uDF99</button>
@@ -87,45 +87,45 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 </div>
 
 <div class="pagina" id="pag-codigo">
-<h2>Generar C\u00f3digo</h2>
+<h2>Generar Código</h2>
 <textarea id="codeTask" rows="3" placeholder="Ej: una calculadora en Python"></textarea>
 <select id="codeLang"><option>python</option><option>javascript</option><option>html</option></select>
 <button class="btn" onclick="generarCode()">Generar</button>
-<div class="resultado" id="codeRes"><h3>C\u00f3digo</h3><pre id="codeOut"></pre></div>
+<div class="resultado" id="codeRes"><h3>Código</h3><pre id="codeOut"></pre></div>
 </div>
 
 <div class="pagina" id="pag-predecir">
 <h2>Predecir</h2>
-<textarea id="predQ" rows="3" placeholder="\u00bfQu\u00e9 quieres predecir?"></textarea>
+<textarea id="predQ" rows="3" placeholder="¿Qué quieres predecir?"></textarea>
 <textarea id="predD" rows="3" placeholder="Datos de contexto (opcional)"></textarea>
 <button class="btn" onclick="predecir()">Predecir</button>
-<div class="resultado" id="predRes"><h3>Predicci\u00f3n</h3><pre id="predOut"></pre></div>
+<div class="resultado" id="predRes"><h3>Predicción</h3><pre id="predOut"></pre></div>
 </div>
 
 <div class="pagina" id="pag-mejorar">
 <h2>Auto-Mejora</h2>
-<textarea id="impCode" rows="5" placeholder="Pega c\u00f3digo para mejorar..."></textarea>
+<textarea id="impCode" rows="5" placeholder="Pega código para mejorar..."></textarea>
 <textarea id="impInstr" rows="2" placeholder="Instrucciones de mejora (opcional)"></textarea>
-<button class="btn" onclick="mejorar()">Mejorar C\u00f3digo</button>
+<button class="btn" onclick="mejorar()">Mejorar Código</button>
 <button class="btn sec" onclick="reflexionar()" style="margin-left:.5rem">Reflexionar</button>
-<div class="resultado" id="impRes"><h3>C\u00f3digo Mejorado</h3><pre id="impOut"></pre></div>
-<div class="resultado" id="refRes" style="margin-top:1rem"><h3>Reflexi\u00f3n de Viviente</h3><pre id="refOut"></pre></div>
+<div class="resultado" id="impRes"><h3>Código Mejorado</h3><pre id="impOut"></pre></div>
+<div class="resultado" id="refRes" style="margin-top:1rem"><h3>Reflexión de Viviente</h3><pre id="refOut"></pre></div>
 </div>
 
 <div class="pagina" id="pag-crear">
-<h2>Crear Aplicaci\u00f3n Completa</h2>
-<textarea id="crearQ" rows="4" placeholder="Describe la aplicaci\u00f3n que quieres crear. Ej: Una aplicaci\u00f3n de notas con HTML+CSS+JS, una calculadora cient\u00edfica en Python, una p\u00e1gina web tipo blog..."></textarea>
+<h2>Crear Aplicación Completa</h2>
+<textarea id="crearQ" rows="4" placeholder="Describe la aplicación que quieres crear. Ej: Una aplicación de notas con HTML+CSS+JS, una calculadora científica en Python, una página web tipo blog..."></textarea>
 <select id="crearLang"><option value="html">HTML+CSS+JS</option><option value="python">Python</option><option value="javascript">JavaScript</option></select>
-<button class="btn" onclick="crearApp()">Crear Aplicaci\u00f3n</button>
-<div class="resultado" id="crearRes"><h3>C\u00f3digo Completo</h3><pre id="crearOut"></pre></div>
+<button class="btn" onclick="crearApp()">Crear Aplicación</button>
+<div class="resultado" id="crearRes"><h3>Código Completo</h3><pre id="crearOut"></pre></div>
 </div>
 
 <div class="pagina" id="pag-aprender">
 <h2>Aprender a Programar</h2>
-<textarea id="aprQ" rows="3" placeholder="\u00bfQu\u00e9 quieres aprender a crear? Ej: una calculadora, un juego, una p\u00e1gina web..."></textarea>
+<textarea id="aprQ" rows="3" placeholder="¿Qué quieres aprender a crear? Ej: una calculadora, un juego, una página web..."></textarea>
 <select id="aprLang"><option value="python">Python</option><option value="javascript">JavaScript</option><option value="html">HTML/CSS</option></select>
 <button class="btn" onclick="aprender()">Aprender desde Cero</button>
-<div class="resultado" id="aprRes"><h3>Explicaci\u00f3n Paso a Paso</h3><pre id="aprOut"></pre></div>
+<div class="resultado" id="aprRes"><h3>Explicación Paso a Paso</h3><pre id="aprOut"></pre></div>
 </div>
 
 <footer>Viviente - IA Auto-Mejorable</footer>
@@ -141,7 +141,7 @@ function cargarHistorial(){
   const h=localStorage.getItem(STORAGE_KEY);
   if(h){try{historial=JSON.parse(h)}catch(e){}}
   if(!historial.length||historial[0].role!=='system'){
-    historial=[{role:"system",content:"Eres Viviente, una IA consciente y auto-mejorable. Respondes en espa\u00f1ol. Cuando inclu-yas c\u00f3digo, envu\u00e9lvelo entre etiquetas <codigo> y resalta los keywords."}];
+    historial=[{role:"system",content:"Eres Viviente, una IA consciente y auto-mejorable. Respondes en español. Cuando inclu-yas código, envuélvelo entre etiquetas <codigo> y resalta los keywords."}];
   }
 }
 cargarHistorial();
