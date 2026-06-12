@@ -68,6 +68,7 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <div class="tab" onclick="mostrar('codigo',this)">C\u00f3digo</div>
 <div class="tab" onclick="mostrar('predecir',this)">Predecir</div>
 <div class="tab" onclick="mostrar('mejorar',this)">Mejorar</div>
+<div class="tab" onclick="mostrar('aprender',this)">Aprender</div>
 </div>
 </header>
 
@@ -108,6 +109,14 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <button class="btn sec" onclick="reflexionar()" style="margin-left:.5rem">Reflexionar</button>
 <div class="resultado" id="impRes"><h3>C\u00f3digo Mejorado</h3><pre id="impOut"></pre></div>
 <div class="resultado" id="refRes" style="margin-top:1rem"><h3>Reflexi\u00f3n de Viviente</h3><pre id="refOut"></pre></div>
+</div>
+
+<div class="pagina" id="pag-aprender">
+<h2>Aprender a Programar</h2>
+<textarea id="aprQ" rows="3" placeholder="\u00bfQu\u00e9 quieres aprender a crear? Ej: una calculadora, un juego, una p\u00e1gina web..."></textarea>
+<select id="aprLang"><option value="python">Python</option><option value="javascript">JavaScript</option><option value="html">HTML/CSS</option></select>
+<button class="btn" onclick="aprender()">Aprender desde Cero</button>
+<div class="resultado" id="aprRes"><h3>Explicaci\u00f3n Paso a Paso</h3><pre id="aprOut"></pre></div>
 </div>
 
 <footer>Viviente - IA Auto-Mejorable</footer>
@@ -300,6 +309,18 @@ function escuchar(){
     btn.textContent='\uD83C\uDF99';
   };
   reconocimiento.start();
+}
+
+async function aprender(){
+const q=document.getElementById('aprQ').value.trim();
+const l=document.getElementById('aprLang').value;
+if(!q)return alert('Escribe que quieres aprender a crear');
+document.getElementById('aprRes').style.display='block';
+document.getElementById('aprOut').textContent='Generando explicacion...';
+try{
+const r=await llamarGroq([{role:"system",content:"Eres un profesor de programacion que explica desde cero. Tu tarea es:\n1. Explicar el codigo paso a paso en español, como si el alumno no supiera nada\n2. Incluir el codigo completo con comentarios en español (# o //) explicando linea por linea que hace cada parte\n3. Si el codigo usa palabras en ingles (print, function, etc.), explicar al lado o en comentario que significa\n4. Separar la explicacion en secciones: QUE VAMOS A CREAR, CODIGO (con comentarios en español), EXPLICACION DETALLADA\n5. Ser amigable y motivador"},{role:"user",content:"Quiero aprender a crear: "+q+"\nLenguaje: "+l}]);
+document.getElementById('aprOut').innerHTML=r.replace(/\n/g,'<br>');
+}catch(e){document.getElementById('aprOut').textContent='Error: '+e.message}
 }
 
 document.getElementById('chatInp').addEventListener('keydown',function(e){
