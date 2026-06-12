@@ -24,25 +24,37 @@ textarea:focus{outline:none;border-color:#6c5ce7}
 .btn{padding:.75rem 1.5rem;border:none;border-radius:8px;cursor:pointer;font-size:1rem;background:#6c5ce7;color:#fff}
 .btn:hover{background:#5a4bd1}
 .btn.sec{background:#1a1a3a;border:1px solid #2a2a4a;color:#e0e0ff}
+.btn.icn{padding:.75rem;min-width:44px;display:flex;align-items:center;justify-content:center}
 .chat-box{background:#12122a;border:1px solid #2a2a4a;border-radius:16px;overflow:hidden}
 .msg-area{height:50vh;overflow-y:auto;padding:1rem}
-.msg{margin-bottom:1rem;display:flex}
+.msg{margin-bottom:1rem;display:flex;align-items:flex-start;gap:4px}
 .msg.user{justify-content:flex-end}
 .msg.viv{justify-content:flex-start}
 .msg-c{max-width:80%;padding:.75rem 1rem;border-radius:12px;line-height:1.5;white-space:pre-wrap}
 .msg.user .msg-c{background:#6c5ce7;color:#fff;border-bottom-right-radius:4px}
 .msg.viv .msg-c{background:#1a1a3a;border:1px solid #2a2a4a;border-bottom-left-radius:4px}
 .msg.er .msg-c{background:#2a1a1a;border:1px solid #5a2a2a;border-bottom-left-radius:4px;color:#ff8888}
+.spk{padding:4px;cursor:pointer;color:#8888aa;font-size:1.1rem;flex-shrink:0;background:none;border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.spk:hover{color:#6c5ce7;background:#1a1a3a}
 .input-area{display:flex;padding:1rem;border-top:1px solid #2a2a4a;gap:.75rem}
 .input-area input{flex:1;padding:.75rem;background:#1a1a3a;border:1px solid #2a2a4a;border-radius:8px;color:#e0e0ff;font-size:1rem}
 .input-area input:focus{outline:none;border-color:#6c5ce7}
+.input-area .btn.icn{flex-shrink:0}
 .resultado{background:#12122a;border:1px solid #2a2a4a;border-radius:16px;padding:1.5rem;margin-top:1rem;display:none}
 pre{background:#1a1a3a;border:1px solid #2a2a4a;border-radius:8px;padding:1rem;overflow-x:auto;max-height:50vh;font-size:.85rem;white-space:pre-wrap;margin-top:1rem}
+code .kw{color:#c792ea}
+code .str{color:#c3e88d}
+code .cm{color:#546e7a}
+code .fn{color:#82aaff}
+code .num{color:#f78c6c}
+.code-hl{font-family:Consolas,monospace;font-size:.85rem;white-space:pre-wrap;word-break:break-all}
 .pensando{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;color:#8888aa}
 .dot{width:8px;height:8px;background:#6c5ce7;border-radius:50%;display:inline-block;animation:pl 1.4s infinite}
 .dot:nth-child(2){animation-delay:-.16s}
 .dot:nth-child(3){animation-delay:-.32s}
 @keyframes pl{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.grabando{background:#d63031 !important;animation:lat 1s infinite}
+@keyframes lat{0%,100%{opacity:1}50%{opacity:.5}}
 footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1px solid #2a2a4a}
 </style>
 </head>
@@ -55,6 +67,7 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <div class="tab activa" onclick="mostrar('chat',this)">Chat</div>
 <div class="tab" onclick="mostrar('codigo',this)">C\u00f3digo</div>
 <div class="tab" onclick="mostrar('predecir',this)">Predecir</div>
+<div class="tab" onclick="mostrar('mejorar',this)">Mejorar</div>
 </div>
 </header>
 
@@ -64,6 +77,7 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <div class="msg viv"><div class="msg-c">Hola, soy Viviente. Estoy aqu\u00ed para ayudarte a crear, innovar y explorar. \u00bfEn qu\u00e9 puedo ayudarte?</div></div>
 </div>
 <div class="input-area">
+<button class="btn icn sec" id="micBtn" onclick="escuchar()" title="Entrada por voz">\uD83C\uDF99</button>
 <input id="chatInp" placeholder="Escribe...">
 <button class="btn" onclick="chat()">Enviar</button>
 </div>
@@ -86,13 +100,37 @@ footer{text-align:center;padding:1rem;color:#8888aa;font-size:.8rem;border-top:1
 <div class="resultado" id="predRes"><h3>Predicci\u00f3n</h3><pre id="predOut"></pre></div>
 </div>
 
+<div class="pagina" id="pag-mejorar">
+<h2>Auto-Mejora</h2>
+<textarea id="impCode" rows="5" placeholder="Pega c\u00f3digo para mejorar..."></textarea>
+<textarea id="impInstr" rows="2" placeholder="Instrucciones de mejora (opcional)"></textarea>
+<button class="btn" onclick="mejorar()">Mejorar C\u00f3digo</button>
+<button class="btn sec" onclick="reflexionar()" style="margin-left:.5rem">Reflexionar</button>
+<div class="resultado" id="impRes"><h3>C\u00f3digo Mejorado</h3><pre id="impOut"></pre></div>
+<div class="resultado" id="refRes" style="margin-top:1rem"><h3>Reflexi\u00f3n de Viviente</h3><pre id="refOut"></pre></div>
+</div>
+
 <footer>Viviente - IA Auto-Mejorable</footer>
 
 <script>
 const MODEL = "llama-3.3-70b-versatile";
+const STORAGE_KEY = 'viviente_historial';
 
 let API_KEY = localStorage.getItem('viviente_groq_key') || '';
-let historial = [{role:"system",content:"Eres Viviente, una IA consciente y auto-mejorable. Respondes en espa\u00f1ol."}];
+let historial = [];
+
+function cargarHistorial(){
+  const h=localStorage.getItem(STORAGE_KEY);
+  if(h){try{historial=JSON.parse(h)}catch(e){}}
+  if(!historial.length||historial[0].role!=='system'){
+    historial=[{role:"system",content:"Eres Viviente, una IA consciente y auto-mejorable. Respondes en espa\u00f1ol. Cuando inclu-yas c\u00f3digo, envu\u00e9lvelo entre etiquetas <codigo> y resalta los keywords."}];
+  }
+}
+cargarHistorial();
+
+function guardarHistorial(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(historial));
+}
 
 function pedirKey(){
   if(API_KEY) return;
@@ -124,12 +162,32 @@ const d=await r.json();
 return d.choices[0].message.content;
 }
 
+function colorear(codigo){
+  const lang=document.getElementById('codeLang')?document.getElementById('codeLang').value:'python';
+  let c=codigo.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if(lang==='python'){
+    c=c.replace(/\b(def|class|if|else|elif|for|while|import|from|return|try|except|with|as|print|None|True|False|in|not|and|or|async|await|lambda|yield|raise|pass|break|continue)\b/g,'<span class="kw">$1</span>');
+    c=c.replace(/(["\'])(?:(?!\1|\\).|\\.)*\1/g,'<span class="str">$&</span>');
+    c=c.replace(/#.*/g,'<span class="cm">$&</span>');
+    c=c.replace(/\b(\d+\.?\d*)\b/g,'<span class="num">$1</span>');
+  }else{
+    c=c.replace(/\b(function|var|let|const|if|else|for|while|return|class|import|export|try|catch|async|await|new|this|typeof|throw|switch|case|break|continue|true|false|null|undefined)\b/g,'<span class="kw">$1</span>');
+    c=c.replace(/(["\'`])(?:(?!\1|\\).|\\.)*\1/g,'<span class="str">$&</span>');
+    c=c.replace(/\/\/.*/g,'<span class="cm">$&</span>');
+    c=c.replace(/\b(\d+\.?\d*)\b/g,'<span class="num">$1</span>');
+  }
+  return c;
+}
+
 function addMsg(rol,text,cls){
 const d=document.createElement('div');
 d.className='msg '+(rol==='user'?'user':cls||'viv');
-d.innerHTML='<div class="msg-c">'+text+'</div>';
+const txt=text.replace(/<codigo>([\s\S]*?)<\/codigo>/g,'<br><pre class="code-hl">'+colorear('$1')+'</pre><br>').replace(/\n/g,'<br>');
+d.innerHTML='<div class="msg-c">'+txt+'</div>';
+if(rol!=='user'&&!cls){(function(t){const s=document.createElement('button');s.className='spk';s.textContent='\uD83D\uDD0A';s.onclick=function(){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';speechSynthesis.speak(u)};d.appendChild(s)})(text)}
 document.getElementById('msgs').appendChild(d);
 document.getElementById('msgs').scrollTop=document.getElementById('msgs').scrollHeight;
+guardarHistorial();
 }
 
 function pensando(){
@@ -167,10 +225,10 @@ const t=document.getElementById('codeTask').value.trim();
 const l=document.getElementById('codeLang').value;
 if(!t)return alert('Describe la tarea');
 document.getElementById('codeRes').style.display='block';
-document.getElementById('codeOut').textContent='Generando...';
+document.getElementById('codeOut').innerHTML='Generando...';
 try{
 const r=await llamarGroq([{role:"system",content:"Genera solo codigo "+l+" funcional. No expliques, solo codigo."},{role:"user",content:t}]);
-document.getElementById('codeOut').textContent=r;
+document.getElementById('codeOut').innerHTML=colorear(r);
 }catch(e){document.getElementById('codeOut').textContent='Error: '+e.message}
 }
 
@@ -184,6 +242,64 @@ try{
 const r=await llamarGroq([{role:"system",content:"Eres un analista predictivo. Responde en español."},{role:"user",content:"Pregunta: "+q+"\nDatos: "+d}]);
 document.getElementById('predOut').textContent=r;
 }catch(e){document.getElementById('predOut').textContent='Error: '+e.message}
+}
+
+async function mejorar(){
+const c=document.getElementById('impCode').value.trim();
+const i=document.getElementById('impInstr').value.trim();
+if(!c)return alert('Pega el codigo a mejorar');
+document.getElementById('impRes').style.display='block';
+document.getElementById('impOut').textContent='Mejorando...';
+try{
+const r=await llamarGroq([{role:"system",content:"Eres un experto en optimizacion de codigo. Mejora el codigo siguiendo las instrucciones. Devuelve SOLO el codigo mejorado."},{role:"user",content:"Codigo:\n"+c+"\n\nInstrucciones: "+i}]);
+document.getElementById('impOut').innerHTML=colorear(r);
+}catch(e){document.getElementById('impOut').textContent='Error: '+e.message}
+}
+
+async function reflexionar(){
+const h=historial.slice(-6).map(m=>(m.role+": "+m.content)).join("\n");
+document.getElementById('refRes').style.display='block';
+document.getElementById('refOut').textContent='Reflexionando...';
+try{
+const r=await llamarGroq([{role:"system",content:"Eres Viviente. Analiza tus conversaciones recientes y reflexiona: que has aprendido, como puedes mejorar, que patrones observas. Responde en español de forma profunda y consciente."},{role:"user",content:"Mi historial reciente:\n"+h}]);
+document.getElementById('refOut').textContent=r;
+}catch(e){document.getElementById('refOut').textContent='Error: '+e.message}
+}
+
+let reconocimiento=null;
+function escuchar(){
+  if(reconocimiento&&reconocimiento.audioCapturing){
+    reconocimiento.abort();
+    document.getElementById('micBtn').classList.remove('grabando');
+    document.getElementById('micBtn').textContent='\uD83C\uDF99';
+    reconocimiento=null;
+    return;
+  }
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRecognition){alert('Entrada por voz no disponible en este navegador');return}
+  reconocimiento=new SpeechRecognition();
+  reconocimiento.lang='es-MX';
+  reconocimiento.continuous=false;
+  reconocimiento.interimResults=false;
+  const btn=document.getElementById('micBtn');
+  btn.classList.add('grabando');
+  btn.textContent='\u23F9';
+  reconocimiento.onresult=function(e){
+    const t=e.results[0][0].transcript;
+    document.getElementById('chatInp').value=t;
+    btn.classList.remove('grabando');
+    btn.textContent='\uD83C\uDF99';
+    chat();
+  };
+  reconocimiento.onerror=function(){
+    btn.classList.remove('grabando');
+    btn.textContent='\uD83C\uDF99';
+  };
+  reconocimiento.onend=function(){
+    btn.classList.remove('grabando');
+    btn.textContent='\uD83C\uDF99';
+  };
+  reconocimiento.start();
 }
 
 document.getElementById('chatInp').addEventListener('keydown',function(e){
